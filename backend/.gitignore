@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+model/weights/*.h5
+model/weights/*.pt
+training_curves.png
+confusion_matrix.png
+dataset/

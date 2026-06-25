@@ -1,0 +1,42 @@
+# Root files to ignore (only track backend and frontend)
+/oralens_model.h5
+/*.bat
+/*.ps1
+/dataset/
+
+# Backend ignores
+backend/__pycache__/
+backend/*.py[cod]
+backend/*.egg-info/
+backend/.venv/
+backend/venv/
+backend/.env
+backend/model/weights/*.h5
+backend/model/weights/*.pt
+backend/training_curves.png
+backend/confusion_matrix.png
+backend/dataset/
+
+# Frontend ignores
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/.env
+frontend/.env.local
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System & Editors
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.sln
+*.sw?

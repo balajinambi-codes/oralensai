@@ -1,0 +1,2 @@
+# Place trained model weights here as oralens_model.h5
+# Generate weights by running: python train_model.py
