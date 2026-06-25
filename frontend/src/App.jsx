@@ -119,7 +119,9 @@ function AppContent() {
 }
 
 export default function App() {
-  const clerkKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+  // Fallback testing key to prevent Clerk from crashing if the environment variable is missing/uninitialized.
+  // This allows the public landing page and AI scanning features to work out of the box.
+  const clerkKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'pk_test_ZW1wdHktY2xlcmstcHVibGlzaGFibGUta2V5LmNsZXJrLmFjY291bnRzLmRldiQ';
 
   return (
     <ClerkProvider publishableKey={clerkKey}>
