@@ -9,8 +9,7 @@ import About from './components/About';
 import Footer from './components/Footer';
 import ErrorToast from './components/ErrorToast';
 import ScanHistory from './components/ScanHistory';
-import ClerkSetupScreen from './components/ClerkSetupScreen';
-import { getClerkPublishableKey } from './utils/clerkSetup';
+
 
 function AppContent() {
   const { user } = useUser();
@@ -120,11 +119,7 @@ function AppContent() {
 }
 
 export default function App() {
-  const clerkKey = getClerkPublishableKey();
-
-  if (!clerkKey) {
-    return <ClerkSetupScreen />;
-  }
+  const clerkKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
   return (
     <ClerkProvider publishableKey={clerkKey}>
