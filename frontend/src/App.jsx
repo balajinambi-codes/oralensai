@@ -119,10 +119,43 @@ function AppContent() {
 }
 
 export default function App() {
-  const clerkKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+  const clerkKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || localStorage.getItem('clerk_publishable_key');
+  const hasValidKey = clerkKey && (clerkKey.trim().startsWith('pk_test_') || clerkKey.trim().startsWith('pk_live_'));
+
+  if (!hasValidKey) {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0a0f1e] text-white p-6 text-center">
+        <div className="w-full max-w-md p-8 border border-red-500/20 bg-[#111827]/80 rounded-3xl shadow-2xl backdrop-blur-xl">
+          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500">
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h1 className="font-display text-xl font-bold tracking-tight text-white">
+            Clerk Key Missing or Invalid
+          </h1>
+          <p className="mt-3 text-sm text-gray-400">
+            We couldn't detect a valid Clerk Publishable Key. Please add it to your <strong>.env</strong> file in the frontend folder:
+          </p>
+          <div className="mt-4 bg-black/50 p-4 rounded-xl text-left text-xs font-mono text-cyan-400 overflow-x-auto select-all">
+            VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+          </div>
+          <p className="mt-4 text-xs text-gray-500 leading-relaxed">
+            Note: If you recently updated your <code>.env</code> file, you <strong>must restart your Vite development server</strong> (press <code>Ctrl+C</code> in the terminal and run <code>npm run dev</code> or <code>start-frontend.ps1</code> again) for Vite to load the new settings.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-6 flex w-full items-center justify-center rounded-xl bg-cyan-600 hover:bg-cyan-500 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-600/20 transition-all duration-300"
+          >
+            Reload Application
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <ClerkProvider publishableKey={clerkKey}>
+    <ClerkProvider publishableKey={clerkKey.trim()}>
       <AppContent />
     </ClerkProvider>
   );
