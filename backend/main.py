@@ -19,6 +19,11 @@ from utils.image_utils import (
     validate_file_size,
     validate_image_bytes,
 )
+from database import get_db, init_db, ScanLog
+from schemas.history import ScanLogCreate, ScanLogResponse
+from sqlalchemy.orm import Session
+from fastapi import Depends
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,6 +38,11 @@ _model_loaded = False
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global _model_loaded
+    try:
+        init_db()
+        logger.info("Database initialized successfully.")
+    except Exception as exc:
+        logger.error(f"Failed to initialize database: {exc}\n{traceback.format_exc()}")
 
     load_model()
     _model_loaded = True
@@ -129,3 +139,75 @@ async def enforce_upload_size_limit(request, call_next):
                 ).model_dump(),
             )
     return await call_next(request)
+
+
+@app.post("/history", response_model=ScanLogResponse, tags=["History"])
+async def create_history_record(record: ScanLogCreate, db: Session = Depends(get_db)):
+    try:
+        # Check if record already exists to avoid duplication
+        existing = db.query(ScanLog).filter(ScanLog.id == record.id).first()
+        if existing:
+            return existing
+
+        db_record = ScanLog(
+            id=record.id,
+            user_id=record.user_id,
+            patient_name=record.patient_name,
+            patient_age=record.patient_age,
+            patient_gender=record.patient_gender,
+            clinical_notes=record.clinical_notes,
+            classification=record.classification,
+            confidence=record.confidence,
+            risk_level=record.risk_level,
+            recommendation=record.recommendation,
+            inference_time_ms=record.inference_time_ms,
+            image_thumbnail=record.image_thumbnail,
+        )
+        db.add(db_record)
+        db.commit()
+        db.refresh(db_record)
+        return db_record
+    except Exception as exc:
+        db.rollback()
+        logger.error("Failed to save scan to database:\n%s", traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Database error: {exc}")
+
+
+@app.get("/history", response_model=list[ScanLogResponse], tags=["History"])
+async def get_history(user_id: str, db: Session = Depends(get_db)):
+    try:
+        records = db.query(ScanLog).filter(ScanLog.user_id == user_id).order_by(ScanLog.timestamp.desc()).all()
+        return records
+    except Exception as exc:
+        logger.error("Failed to get scan history from database:\n%s", traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Database error: {exc}")
+
+
+@app.delete("/history/clear", tags=["History"])
+async def clear_history(user_id: str, db: Session = Depends(get_db)):
+    try:
+        db.query(ScanLog).filter(ScanLog.user_id == user_id).delete()
+        db.commit()
+        return {"status": "success", "message": f"History cleared for user {user_id}"}
+    except Exception as exc:
+        db.rollback()
+        logger.error("Failed to clear scan history from database:\n%s", traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Database error: {exc}")
+
+
+@app.delete("/history/{record_id}", tags=["History"])
+async def delete_history_record(record_id: str, user_id: str, db: Session = Depends(get_db)):
+    try:
+        record = db.query(ScanLog).filter(ScanLog.id == record_id, ScanLog.user_id == user_id).first()
+        if not record:
+            raise HTTPException(status_code=404, detail="Scan record not found.")
+        db.delete(record)
+        db.commit()
+        return {"status": "success", "message": f"Scan record {record_id} deleted."}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        db.rollback()
+        logger.error("Failed to delete scan record from database:\n%s", traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Database error: {exc}")
+

@@ -21,31 +21,60 @@ export default function ScanHistory({ userId }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRisk, setFilterRisk] = useState('All');
   const [selectedScan, setSelectedScan] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const loadHistory = async () => {
+    if (!userId) return;
+    setLoading(true);
+    try {
+      const data = await getScanHistory(userId);
+      setHistory(data);
+    } catch (e) {
+      console.error('Failed to load history:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Load history on mount or when userId changes
   useEffect(() => {
-    if (userId) {
-      setHistory(getScanHistory(userId));
-    }
+    loadHistory();
   }, [userId]);
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this scan log?')) {
-      deleteScanRecord(id);
-      setHistory(getScanHistory(userId));
-      if (selectedScan?.id === id) {
-        setSelectedScan(null);
+      setLoading(true);
+      try {
+        await deleteScanRecord(id, userId);
+        const data = await getScanHistory(userId);
+        setHistory(data);
+        if (selectedScan?.id === id) {
+          setSelectedScan(null);
+        }
+      } catch (e) {
+        console.error('Failed to delete scan:', e);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
-  const handleClearAll = () => {
+  const handleClearAll = async () => {
     if (window.confirm('Are you sure you want to clear ALL your screening records? This cannot be undone.')) {
-      clearScanHistory(userId);
-      setHistory(getScanHistory(userId));
-      setSelectedScan(null);
+      setLoading(true);
+      try {
+        await clearScanHistory(userId);
+        const data = await getScanHistory(userId);
+        setHistory(data);
+        setSelectedScan(null);
+      } catch (e) {
+        console.error('Failed to clear history:', e);
+      } finally {
+        setLoading(false);
+      }
     }
   };
+
 
   // Filter history based on search and dropdown filters
   const filteredHistory = history.filter((item) => {
@@ -357,7 +386,16 @@ export default function ScanHistory({ userId }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
-                {filteredHistory.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-muted">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
+                        <span className="text-sm font-medium text-muted">Synchronizing cloud medical database...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredHistory.length > 0 ? (
                   filteredHistory.map((scan) => {
                     const badgeColor = getClassificationColor(scan.classification);
                     const riskColor = getRiskColor(scan.riskLevel);
