@@ -2,6 +2,10 @@ import os
 from sqlalchemy import create_engine, Column, String, Float, DateTime, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # Read DATABASE_URL from environment; default to a local SQLite file if not configured
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./oralens.db")
