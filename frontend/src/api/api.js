@@ -13,6 +13,6 @@ export const predictImage = async (imageFile) => {
 };
 
 export const checkHealth = async () => {
-  const response = await axios.get(`${BASE_URL}/health`, { timeout: 5000 });
+  const response = await axios.get(`${BASE_URL}/health`, { timeout: 30000 });
   return response.data;
 };
