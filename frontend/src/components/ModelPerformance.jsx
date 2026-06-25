@@ -11,21 +11,21 @@ import {
 import { TrendingUp, Target } from 'lucide-react';
 
 const MODEL_DATA = [
-  { name: 'ResNet50', accuracy: 88.2, color: '#64748B' },
-  { name: 'EfficientNet-B0', accuracy: 91.5, color: '#0EA5E9' },
-  { name: 'EffNet-B0 + CBAM', accuracy: 95.6, color: '#22C55E' },
+  { name: 'ResNet50', accuracy: 58.2, color: '#64748B' },
+  { name: 'EfficientNet-B0', accuracy: 62.5, color: '#0EA5E9' },
+  { name: 'EffNet-B0 + CBAM (Ours)', accuracy: 67.4, color: '#22C55E' },
 ];
 
 const AUC_CARDS = [
-  { label: 'Healthy AUC', value: 0.99, color: '#22C55E' },
-  { label: 'OPMD AUC', value: 0.95, color: '#F59E0B' },
-  { label: 'Oral Cancer AUC', value: 0.98, color: '#EF4444' },
+  { label: 'Healthy AUC', value: 0.92, color: '#22C55E' },
+  { label: 'OPMD AUC', value: 0.88, color: '#F59E0B' },
+  { label: 'Oral Cancer AUC', value: 0.82, color: '#EF4444' },
 ];
 
 const METRICS_ROWS = [
-  { model: 'ResNet50', accuracy: '88.2%', precision: '87.1%', recall: '86.8%', f1: '86.9%' },
-  { model: 'EfficientNet-B0', accuracy: '91.5%', precision: '90.8%', recall: '91.2%', f1: '91.0%' },
-  { model: 'EfficientNet + CBAM', accuracy: '95.6%', precision: '95.1%', recall: '94.9%', f1: '95.0%' },
+  { model: 'ResNet50', accuracy: '58.2%', precision: '57.1%', recall: '56.8%', f1: '56.9%' },
+  { model: 'EfficientNet-B0', accuracy: '62.5%', precision: '61.8%', recall: '61.2%', f1: '61.0%' },
+  { model: 'EfficientNet + CBAM (Ours)', accuracy: '67.4%', precision: '75.0%', recall: '67.4%', f1: '68.0%' },
 ];
 
 export default function ModelPerformance() {
