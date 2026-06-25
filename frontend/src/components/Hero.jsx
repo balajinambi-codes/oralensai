@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Activity, Cpu, Sparkles } from 'lucide-react';
-import { useUser, SignInButton } from '@clerk/clerk-react';
+import { useUser, SignInButton } from '../utils/clerkHelper';
 
 const PARTICLES = Array.from({ length: 15 }, (_, i) => ({
   id: i,

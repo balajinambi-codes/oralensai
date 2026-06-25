@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Dna, Menu, X, LogIn, Activity, Database, Sparkles } from 'lucide-react';
 import { checkHealth } from '../api/api';
-import { SignInButton, UserButton, SignedIn, SignedOut } from '@clerk/clerk-react';
+import { SignInButton, UserButton, SignedIn, SignedOut } from '../utils/clerkHelper';
 
 export default function Navbar({ activeTab, onTabChange }) {
   const [isOnline, setIsOnline] = useState(null);

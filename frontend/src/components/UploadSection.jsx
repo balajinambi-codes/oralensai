@@ -6,7 +6,7 @@ import { predictImage } from '../api/api';
 import { parsePredictionResponse, getApiErrorMessage } from '../utils/parseResponse';
 import LoadingSteps from './LoadingSteps';
 import { saveScanToHistory } from '../utils/historyDb';
-import { SignedIn, SignedOut, SignInButton, useUser } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, SignInButton, useUser } from '../utils/clerkHelper';
 
 const MAX_SIZE = 10 * 1024 * 1024;
 const STEP_DELAY = 700;
